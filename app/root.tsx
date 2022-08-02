@@ -3,6 +3,7 @@ import {
   Links,
   LiveReload,
   Meta,
+  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
@@ -22,6 +23,22 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <header>
+          <h1>Testing My Patience</h1>
+        </header>
+        <nav>
+          <NavLink to="/" end>
+            Home
+          </NavLink>
+          <NavLink to="/about">About</NavLink>
+          <a
+            href="https://github.com/yis4yimmy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+        </nav>
         <Outlet />
         <ScrollRestoration />
         <Scripts />

@@ -18,7 +18,7 @@ const PrivacyPolicy = () => {
 
   return (
     <Main>
-      <Title title={frontmatter.title} />
+      <Title title={frontmatter.title} subtitle={frontmatter.subtitle} />
       <PrivacyContent />
     </Main>
   );

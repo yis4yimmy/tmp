@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+h1 {
+  @apply font-heading text-4xl font-bold mt-4;
+}
+
+h2 {
+  @apply font-heading text-3xl font-bold mt-6;
+}
+
+h3 {
+  @apply font-heading text-2xl font-bold mt-6;
+}
+
+h3 {
+  @apply font-heading text-xl font-bold mt-4;
+}
+
+h4 {
+  @apply font-heading text-lg font-bold mt-4;
+}
+
+h5 {
+  @apply font-heading text-base font-bold mt-4;
+}
+
+h6 {
+  @apply font-heading text-base font-bold uppercase mt-4;
+}
+
+p {
+  @apply text-base;
+}
+
+p:not(:first-of-type) {
+  @apply mt-4;
+}

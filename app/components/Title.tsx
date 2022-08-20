@@ -1,8 +1,11 @@
-const Title = ({ title }: { title?: string }) =>
+const Title = ({ title, subtitle }: { title?: string; subtitle?: string }) =>
   title ? (
-    <h1 className="font-display text-4xl sm:text-6xl text-center py-12">
-      {title}
-    </h1>
+    <div className="text-center py-12">
+      <h1 className="font-display text-5xl sm:text-6xl mb-8 text-gray-700">
+        {title}
+      </h1>
+      {subtitle && <h3>{subtitle}</h3>}
+    </div>
   ) : (
     <></>
   );

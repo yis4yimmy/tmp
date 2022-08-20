@@ -15,7 +15,11 @@ import styles from "./tailwind.css";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true },
+  {
+    rel: "preconnect",
+    href: "https://fonts.gstatic.com",
+    crossOrigin: "anonymous",
+  },
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap",
@@ -35,7 +39,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="container mx-auto px-4 font-body">
+      <body className="container mx-auto px-4 font-body text-gray-900">
         <header className="flex flex-col sm:flex-row justify-center sm:justify-between items-center sm:items-baseline mt-4 mb-6 gap-4">
           <Link
             className="font-heading font-bold text-3xl leading-loose"

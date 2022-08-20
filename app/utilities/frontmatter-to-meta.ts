@@ -1,12 +1,6 @@
 import type { HtmlMetaDescriptor } from "@remix-run/node";
 import defaultMeta from "../constants/default-meta";
 
-interface Frontmatter {
-  metaTitle?: string;
-  author?: string;
-  description?: string;
-}
-
 const setMetaFromFrontmatter = ({
   frontmatter = {},
 }: {

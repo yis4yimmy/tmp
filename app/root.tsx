@@ -1,5 +1,6 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -8,11 +9,23 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import defaultMeta from "./constants/default-meta";
+import styles from "./tailwind.css";
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: styles },
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: true },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Bungee+Shade&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap",
+  },
+];
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "New Remix App",
   viewport: "width=device-width,initial-scale=1",
+  ...defaultMeta,
 });
 
 export default function App() {
@@ -22,23 +35,31 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
-        <header>
-          <h1>Testing My Patience</h1>
-        </header>
-        <nav>
-          <NavLink to="/" end>
-            Home
-          </NavLink>
-          <NavLink to="/about">About</NavLink>
-          <a
-            href="https://github.com/yis4yimmy"
-            target="_blank"
-            rel="noopener noreferrer"
+      <body className="container mx-auto px-4 font-body">
+        <header className="flex flex-col sm:flex-row justify-center sm:justify-between items-center sm:items-baseline mt-4 mb-6 gap-4">
+          <Link
+            className="font-heading font-bold text-3xl leading-loose"
+            to="/"
           >
-            GitHub
-          </a>
-        </nav>
+            Testing My Patience
+          </Link>
+          <nav className="font-heading text-lg flex gap-5">
+            <NavLink className="hover:underline" to="/" end>
+              Blog
+            </NavLink>
+            <NavLink className="hover:underline" to="/about">
+              About
+            </NavLink>
+            <a
+              className="hover:underline"
+              href="https://github.com/yis4yimmy"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </nav>
+        </header>
         <Outlet />
         <ScrollRestoration />
         <Scripts />

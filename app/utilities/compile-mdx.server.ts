@@ -5,7 +5,7 @@ export const bundleMDXForPage = async (path: string) => {
   try {
     const fileContents = await getFileFromGit(path);
 
-    const { code, frontmatter } = await bundleMDX({
+    const { code, frontmatter } = await bundleMDX<Frontmatter>({
       source: fileContents,
     });
 

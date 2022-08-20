@@ -1,24 +1,24 @@
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { bundleMDXForPage } from "../utilities/compile-mdx.server";
 import useMDXComponent from "../hooks/useMDXComponent";
+import { bundleMDXForPage } from "../utilities/compile-mdx.server";
 import setMetaFromFrontmatter from "../utilities/frontmatter-to-meta";
 
 export const loader: LoaderFunction = async () =>
-  bundleMDXForPage("content/about.mdx");
+  bundleMDXForPage("content/privacy-policy.mdx");
 
 export const meta: MetaFunction = ({ data }) => setMetaFromFrontmatter(data);
 
-const About = () => {
+const PrivacyPolicy = () => {
   const { code } = useLoaderData();
 
-  const AboutContent = useMDXComponent(code);
+  const PrivacyContent = useMDXComponent(code);
 
   return (
     <main>
-      <AboutContent />
+      <PrivacyContent />
     </main>
   );
 };
 
-export default About;
+export default PrivacyPolicy;

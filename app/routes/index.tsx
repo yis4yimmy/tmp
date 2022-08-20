@@ -1,18 +1,22 @@
-import { Link, useLoaderData } from "@remix-run/react";
-import { getFileFromGit } from "../utilities/github.server";
+import type { LoaderFunction, MetaFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import useMDXComponent from "../hooks/useMDXComponent";
+import { bundleMDXForPage } from "../utilities/compile-mdx.server";
+import setMetaFromFrontmatter from "../utilities/frontmatter-to-meta";
 
-export const loader = async () => {
-  const homeContent = await getFileFromGit("content/home.mdx");
+export const loader: LoaderFunction = async () =>
+  bundleMDXForPage("content/home.mdx");
 
-  return homeContent;
-};
+export const meta: MetaFunction = ({ data }) => setMetaFromFrontmatter(data);
 
 const Index = () => {
-  const homeContent = useLoaderData();
+  const { code } = useLoaderData();
+
+  const HomeContent = useMDXComponent(code);
 
   return (
     <main>
-      <pre>{homeContent}</pre>
+      <HomeContent />
     </main>
   );
 };

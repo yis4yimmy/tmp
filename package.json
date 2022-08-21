@@ -3,7 +3,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "yarn generate:css --minify && yarn remix build",
-    "dev": "concurrently \"yarn generate:css --watch\" \"yarn remix dev\"",
+    "dev": "concurrently --kill-others \"yarn generate:css --watch\" \"yarn remix dev\"",
     "generate:css": "tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
     "start": "remix-serve build"
   },
@@ -15,7 +15,8 @@
     "esbuild": "0.14.22",
     "mdx-bundler": "^9.0.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "remark-gfm": "^3.0.1"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.6.7",

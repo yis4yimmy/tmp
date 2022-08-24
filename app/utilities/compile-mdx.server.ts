@@ -1,7 +1,11 @@
 import { bundleMDX } from "mdx-bundler";
 import path from "path";
 import remarkGfm from "remark-gfm";
-import { getFileFromGit } from "./github.server";
+import {
+  getBlobFromGitUrl,
+  getDirItemsFromGit,
+  getFileFromGit,
+} from "./github.server";
 
 if (process.platform === "win32") {
   process.env.ESBUILD_BINARY_PATH = path.join(
@@ -20,19 +24,46 @@ if (process.platform === "win32") {
   );
 }
 
+const bundleMDXWithOptions = async (blob: string) => {
+  const { code, frontmatter } = await bundleMDX<Frontmatter>({
+    source: blob,
+    mdxOptions: (options) => {
+      options.remarkPlugins = [...(options.remarkPlugins ?? []), remarkGfm];
+      return options;
+    },
+  });
+
+  return { code, frontmatter };
+};
+
 export const bundleMDXForPage = async (path: string) => {
   try {
-    const fileContents = await getFileFromGit(path);
+    const blob = await getFileFromGit(path);
 
-    const { code, frontmatter } = await bundleMDX<Frontmatter>({
-      source: fileContents,
-      mdxOptions: (options) => {
-        options.remarkPlugins = [...(options.remarkPlugins ?? []), remarkGfm];
-        return options;
-      },
-    });
+    return bundleMDXWithOptions(blob);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-    return { code, frontmatter };
+export const getContentForListPage = async (path: string) => {
+  try {
+    const dirItems = await getDirItemsFromGit(path);
+
+    const itemsContent = await Promise.all(
+      dirItems.reduce((requests, { git_url: gitUrl }) => {
+        if (gitUrl) {
+          requests.push(getBlobFromGitUrl(gitUrl));
+        }
+        return requests;
+      }, [] as Promise<string>[])
+    );
+
+    const compiledContent = await Promise.all(
+      itemsContent.map((blob) => bundleMDXWithOptions(blob))
+    );
+
+    return compiledContent;
   } catch (error) {
     console.error(error);
   }

@@ -4,6 +4,37 @@ const octokit = new Octokit({
   auth: process.env.MDX_GITHUB_TOKEN,
 });
 
+export const getDirItemsFromGit = async (dirPath: string) => {
+  try {
+    const dirItems = await octokit.repos.getContent({
+      owner: "yis4yimmy",
+      repo: "tmp",
+      path: dirPath,
+    });
+
+    const items = dirItems.data;
+
+    if (!items || !Array.isArray(items)) {
+      throw new Error("Invalid directory maybe?");
+    }
+
+    return items;
+  } catch (error) {
+    console.error(error);
+
+    throw error;
+  }
+};
+
+export const getBlobFromGitUrl = async (gitUrl: string) => {
+  const blobResponse = await octokit.request({ url: gitUrl });
+
+  return Buffer.from(
+    blobResponse.data.content,
+    blobResponse.data.encoding
+  ).toString();
+};
+
 export const getFileFromGit = async (path: string) => {
   try {
     const content = (await octokit.repos.getContent({
@@ -18,15 +49,10 @@ export const getFileFromGit = async (path: string) => {
       throw new Error("Requested file cannot be fetched as a blob");
     }
 
-    const blobResponse = await octokit.request({ url: blobUrl });
-
-    return Buffer.from(
-      blobResponse.data.content,
-      blobResponse.data.encoding
-    ).toString();
+    return getBlobFromGitUrl(blobUrl);
   } catch (error) {
     console.error(error);
 
-    return "Error";
+    throw error;
   }
 };

@@ -5,6 +5,7 @@ interface Frontmatter {
   slug?: string;
   author?: string;
   description?: string;
+  date?: string;
 }
 
 interface MDXLoaderData {

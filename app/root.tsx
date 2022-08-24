@@ -50,7 +50,7 @@ export default function App() {
             Testing My Patience
           </NavLink>
           <nav className="font-heading text-lg flex gap-5">
-            <NavLink className="hover:underline" to="/" end>
+            <NavLink className="hover:underline" to="/blog">
               Blog
             </NavLink>
             <NavLink className="hover:underline" to="/about">

@@ -16,7 +16,8 @@ export const loader: LoaderFunction = async () => {
   return { mainContent, postsList };
 };
 
-export const meta: MetaFunction = ({ data }) => setMetaFromFrontmatter(data);
+export const meta: MetaFunction = ({ data }) =>
+  setMetaFromFrontmatter({ frontmatter: data.mainContent.frontmatter });
 
 const Index = () => {
   const { mainContent, postsList } = useLoaderData<{
@@ -33,10 +34,13 @@ const Index = () => {
         subtitle={mainContent.frontmatter.subtitle}
       />
       <HomeContent />
-      <ul className="">
+      <ul>
         {postsList.map(({ frontmatter }) => (
-          <Link key={frontmatter.slug} to={`blog/${frontmatter.slug}`}>
-            <li className="">
+          <Link
+            key={`blog/${frontmatter.slug}`}
+            to={`blog/${frontmatter.slug}`}
+          >
+            <li>
               <span>{frontmatter.date}</span>
               <h3>{frontmatter.title}</h3>
               <p>{frontmatter.description}</p>

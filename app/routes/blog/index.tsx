@@ -3,13 +3,13 @@ import { Link, useLoaderData } from "@remix-run/react";
 import Main from "../../components/Main";
 import Title from "../../components/Title";
 import {
-  bundleMDXForPage,
+  getContentForPage,
   getContentForListPage,
 } from "../../utilities/compile-mdx.server";
 import setMetaFromFrontmatter from "../../utilities/frontmatter-to-meta";
 
 export const loader: LoaderFunction = async () => {
-  const blogContent = await bundleMDXForPage("content/blog-list.mdx");
+  const blogContent = await getContentForPage("content/blog-list.mdx");
   const postsList = await getContentForListPage("content/blog");
 
   return { blogContent, postsList };

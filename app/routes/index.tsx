@@ -4,13 +4,13 @@ import Main from "../components/Main";
 import Title from "../components/Title";
 import useMDXComponent from "../hooks/useMDXComponent";
 import {
-  bundleMDXForPage,
+  getContentForPage,
   getContentForListPage,
 } from "../utilities/compile-mdx.server";
 import setMetaFromFrontmatter from "../utilities/frontmatter-to-meta";
 
 export const loader: LoaderFunction = async () => {
-  const mainContent = await bundleMDXForPage("content/home.mdx");
+  const mainContent = await getContentForPage("content/home.mdx");
   const postsList = await getContentForListPage("content/blog");
 
   return { mainContent, postsList };

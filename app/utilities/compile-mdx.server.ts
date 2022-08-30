@@ -1,6 +1,7 @@
 import { bundleMDX } from "mdx-bundler";
 import path from "path";
 import remarkGfm from "remark-gfm";
+import { getCachedContent } from "./cache.server";
 import {
   getBlobFromGitUrl,
   getDirItemsFromGit,
@@ -36,7 +37,7 @@ const bundleMDXWithOptions = async (blob: string) => {
   return { code, frontmatter };
 };
 
-export const bundleMDXForPage = async (path: string) => {
+const bundleMDXForPage = async (path: string) => {
   try {
     const blob = await getFileFromGit(path);
 
@@ -45,6 +46,9 @@ export const bundleMDXForPage = async (path: string) => {
     console.error(error);
   }
 };
+
+export const getContentForPage = async (path: string) =>
+  getCachedContent(path, () => bundleMDXForPage(path));
 
 export const getContentForListPage = async (path: string) => {
   try {

@@ -51,3 +51,5 @@ export const getCachedContent = async <Value>(
     return undefined;
   }
 };
+
+export const checkCache = (key: string) => !!global.cache?.has(key);

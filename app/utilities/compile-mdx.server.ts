@@ -1,7 +1,7 @@
 import { bundleMDX } from "mdx-bundler";
 import path from "path";
 import remarkGfm from "remark-gfm";
-import { getCachedContent } from "./cache.server";
+import { checkCache, getCachedContent } from "./cache.server";
 import {
   getBlobFromGitUrl,
   getDirItemsFromGit,
@@ -55,16 +55,35 @@ export const getContentForListPage = async (path: string) => {
     const dirItems = await getDirItemsFromGit(path);
 
     const itemsContent = await Promise.all(
-      dirItems.reduce((requests, { git_url: gitUrl }) => {
-        if (gitUrl) {
-          requests.push(getBlobFromGitUrl(gitUrl));
+      dirItems.reduce((requests, { git_url: gitUrl, path }) => {
+        if (checkCache(path)) {
+          console.info("List item in cache:", path);
+
+          requests.push(
+            new Promise((resolve) => resolve({ cached: true, path }))
+          );
+        } else if (gitUrl) {
+          requests.push(
+            (async () => {
+              const blob = await getBlobFromGitUrl(gitUrl);
+
+              return { cached: false, path, blob };
+            })()
+          );
         }
+
         return requests;
-      }, [] as Promise<string>[])
+      }, [] as Promise<{ cached: boolean; path: string; blob?: string }>[])
     );
 
     const compiledContent = await Promise.all(
-      itemsContent.map((blob) => bundleMDXWithOptions(blob))
+      itemsContent.map(({ cached, path, blob }) => {
+        if (cached || !blob) {
+          return getCachedContent(path, () => bundleMDXForPage(path));
+        }
+
+        return getCachedContent(path, () => bundleMDXWithOptions(blob));
+      })
     );
 
     return compiledContent;

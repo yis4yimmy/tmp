@@ -53,3 +53,19 @@ export const getCachedContent = async <Value>(
 };
 
 export const checkCache = (key: string) => !!global.cache?.has(key);
+
+export const getAllKeys = () => {
+  const allKeys = global.cache?.keys();
+
+  if (allKeys) {
+    return [...allKeys];
+  }
+
+  return [];
+};
+
+export const dropItLikeItsHot = (key: string) => {
+  const result = global.cache?.delete(key);
+
+  return result;
+};

@@ -27,7 +27,7 @@ export const getCachedContent = async <Value>(
   fetchFuntion: () => Promise<Value>
 ): Promise<Value | undefined> => {
   try {
-    const item = global.cache?.get<Value>(key);
+    const item = global.cache?.get(key);
 
     if (item) {
       console.info("Found in cache:", key);

@@ -13,7 +13,7 @@
     "@remix-run/serve": "^1.6.7",
     "esbuild": "0.17.12",
     "isbot": "latest",
-    "lru-cache": "^7.14.0",
+    "lru-cache": "^8.0.4",
     "mdx-bundler": "^9.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

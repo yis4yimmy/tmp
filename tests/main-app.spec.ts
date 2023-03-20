@@ -8,7 +8,7 @@ test.describe("Homepage", () => {
   });
 
   test("should have at least one blog post", async ({ page }) => {
-    await page.goto("/blog");
+    await page.goto("/");
 
     const postLinks = await page.getByRole("listitem").all();
 
@@ -16,11 +16,21 @@ test.describe("Homepage", () => {
   });
 
   test("should have no more than 3 blog posts", async ({ page }) => {
-    await page.goto("/blog");
+    await page.goto("/");
 
     const postLinks = await page.getByRole("listitem").all();
 
     expect(postLinks.length).toBeLessThanOrEqual(3);
+  });
+
+  test("should navigate to the blog posts", async ({ page }) => {
+    await page.goto("/");
+
+    for (const link of await page.getByRole("listitem").all()) {
+      await link.click();
+
+      await expect(page).not.toHaveTitle(/404: Post Not Found/i);
+    }
   });
 });
 
@@ -83,5 +93,15 @@ test.describe("Blog Listing", () => {
     const postLinks = await page.getByRole("listitem").all();
 
     expect(postLinks.length).toBeGreaterThanOrEqual(1);
+  });
+
+  test("should navigate to the blog posts", async ({ page }) => {
+    await page.goto("/blog");
+
+    for (const link of await page.getByRole("listitem").all()) {
+      await link.click();
+
+      await expect(page).not.toHaveTitle(/404: Post Not Found/i);
+    }
   });
 });

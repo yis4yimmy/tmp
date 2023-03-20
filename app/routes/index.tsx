@@ -1,6 +1,7 @@
 import type { LoaderFunction, MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import Main from "../components/Main";
+import PostList from "../components/PostList";
 import Title from "../components/Title";
 import useMDXComponent from "../hooks/useMDXComponent";
 import {
@@ -34,20 +35,7 @@ const Index = () => {
         subtitle={mainContent.frontmatter.subtitle}
       />
       <HomeContent />
-      <ul>
-        {postsList.map(({ frontmatter }) => (
-          <Link
-            key={`blog/${frontmatter.slug}`}
-            to={`blog/${frontmatter.slug}`}
-          >
-            <li>
-              <span>{frontmatter.date}</span>
-              <h3>{frontmatter.title}</h3>
-              <p>{frontmatter.description}</p>
-            </li>
-          </Link>
-        ))}
-      </ul>
+      <PostList posts={postsList.map(({ frontmatter }) => frontmatter)} />
     </Main>
   );
 };

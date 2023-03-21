@@ -37,3 +37,16 @@ p {
 p:not(:first-of-type) {
   @apply mt-4;
 }
+
+.card-link {
+  position: relative;
+}
+
+.card-link h3 a::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

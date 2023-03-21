@@ -25,31 +25,26 @@ declare global {
 export const getCachedContent = async <Value>(
   key: string,
   fetchFuntion: () => Promise<Value>
-): Promise<Value | undefined> => {
-  try {
-    const item = global.cache?.get(key);
+): Promise<Value> => {
+  const item = global.cache?.get(key);
 
-    if (item) {
-      console.info("Found in cache:", key);
-      return item;
-    } else {
-      throw new Error("NOT_IN_CACHE");
-    }
-  } catch (error) {
-    if (error instanceof Error && error.message === "NOT_IN_CACHE") {
-      const fetchedItem = await fetchFuntion();
+  if (item) {
+    console.info("Found in cache:", key);
 
-      if (fetchedItem) {
-        global.cache?.set(key, fetchedItem);
-
-        return fetchedItem;
-      }
-    }
-
-    console.error(error);
-
-    return undefined;
+    return item;
   }
+
+  console.info("Attempting to fetch item:", key);
+
+  const fetchedItem = await fetchFuntion();
+
+  if (fetchedItem) {
+    global.cache?.set(key, fetchedItem);
+
+    return fetchedItem;
+  }
+
+  throw new Error(`Could not fetch item with key: ${key}`);
 };
 
 export const checkCache = (key: string) => !!global.cache?.has(key);

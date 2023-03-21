@@ -8,7 +8,10 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useCatch,
 } from "@remix-run/react";
+import type { ReactNode } from "react";
+import ErrorPage from "./components/ErrorPage";
 import defaultMeta from "./constants/default-meta";
 import styles from "./tailwind.css";
 
@@ -32,13 +35,20 @@ export const meta: MetaFunction = () => ({
   ...defaultMeta,
 });
 
-export default function App() {
+function Document({
+  title = "Testing My Patience",
+  children,
+}: {
+  title?: string;
+  children: ReactNode;
+}) {
   const today = new Date();
 
   return (
     <html lang="en">
       <head>
         <Meta />
+        <title>{title}</title>
         <Links />
       </head>
       <body className="container min-h-screen flex flex-col mx-auto px-4 font-body text-gray-900">
@@ -66,7 +76,7 @@ export default function App() {
             </a>
           </nav>
         </header>
-        <Outlet />
+        {children}
         <footer className="text-center pt-16 pb-12">
           <ul className="mt-3">
             <li className="px-3">
@@ -82,5 +92,35 @@ export default function App() {
         <LiveReload />
       </body>
     </html>
+  );
+}
+
+export function CatchBoundary() {
+  const error = useCatch();
+
+  const title = `${error.status}: ${error.statusText}`;
+
+  return (
+    <Document title={title}>
+      <ErrorPage title={title} />
+    </Document>
+  );
+}
+
+export function ErrorBoundary() {
+  const title = "500: Application Error";
+
+  return (
+    <Document title={title}>
+      <ErrorPage title={title} />
+    </Document>
+  );
+}
+
+export default function App() {
+  return (
+    <Document>
+      <Outlet />
+    </Document>
   );
 }

@@ -1,23 +1,40 @@
-import type { LoaderFunction, MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import type { LoaderArgs, MetaFunction } from "@remix-run/node";
+import { useCatch, useLoaderData } from "@remix-run/react";
 import Main from "../../components/Main";
 import Title from "../../components/Title";
 import useMDXComponent from "../../hooks/useMDXComponent";
 import { getContentForPage } from "../../utilities/compile-mdx.server";
 import setMetaFromFrontmatter from "../../utilities/frontmatter-to-meta";
 
-export const loader: LoaderFunction = async ({ params }) => {
-  const postContent = await getContentForPage(
-    `content/blog/${params.slug}.mdx`
-  );
+export async function loader({ params }: LoaderArgs) {
+  try {
+    const postContent = await getContentForPage(
+      `content/blog/${params.slug}.mdx`
+    );
 
-  return postContent;
-};
+    console.log({ postContent });
+
+    return json(postContent);
+  } catch (error) {
+    if (error instanceof Error && error.message === "Not Found") {
+      throw new Response("Post Not Found", {
+        status: 404,
+        statusText: "Post Not Found",
+      });
+    }
+  }
+
+  throw new Response("Application Error", {
+    status: 500,
+    statusText: "Application Error",
+  });
+}
 
 export const meta: MetaFunction = ({ data }) => setMetaFromFrontmatter(data);
 
-const Post = () => {
-  const { code, frontmatter } = useLoaderData<MDXLoaderData>();
+export default function Post() {
+  const { code, frontmatter } = useLoaderData<typeof loader>();
 
   const PostContent = useMDXComponent(code);
 
@@ -31,6 +48,4 @@ const Post = () => {
       <PostContent />
     </Main>
   );
-};
-
-export default Post;
+}

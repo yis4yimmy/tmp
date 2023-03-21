@@ -1,9 +1,9 @@
-import { ActionFunction } from "@remix-run/node";
+import { ActionArgs } from "@remix-run/node";
 import Main from "../../components/Main";
 import Title from "../../components/Title";
 import { createAdminSession, login } from "../../utilities/session.server";
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
 
   const password = formData.get("password");
@@ -13,7 +13,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (validCreds) {
     return createAdminSession("/admin/cache-management");
   }
-};
+}
 
 const Admin = () => {
   return (

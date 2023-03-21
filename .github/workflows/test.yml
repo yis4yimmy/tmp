@@ -11,7 +11,6 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    environment: E2E
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -33,6 +32,9 @@ jobs:
 
       - name: Run Playwright tests
         run: yarn playwright test
+        env:
+          MDX_GITHUB_TOKEN: ${{ secrets.MDX_GITHUB_TOKEN }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
 
       - uses: actions/upload-artifact@v3
         if: always()

@@ -1,14 +1,21 @@
 import type { HtmlMetaDescriptor } from "@remix-run/node";
 import defaultMeta from "../constants/default-meta";
 
-const setMetaFromFrontmatter = ({
-  frontmatter = {},
-}: {
-  frontmatter: Frontmatter;
-}): HtmlMetaDescriptor => ({
-  title: frontmatter.metaTitle || defaultMeta.title,
-  author: frontmatter.author || defaultMeta.author,
-  description: frontmatter.description || defaultMeta.description,
-});
+export default function setMetaFromFrontmatter(
+  data: unknown
+): HtmlMetaDescriptor {
+  if (isValidData(data)) {
+    return {
+      title: data.frontmatter.metaTitle || defaultMeta.title,
+      author: data.frontmatter.author || defaultMeta.author,
+      description: data.frontmatter.description || defaultMeta.description,
+    };
+  }
+  return defaultMeta;
+}
 
-export default setMetaFromFrontmatter;
+function isValidData(x: any): x is { frontmatter: Frontmatter } {
+  return (
+    x instanceof Object && "frontmatter" in x && x.fronmatter instanceof Object
+  );
+}

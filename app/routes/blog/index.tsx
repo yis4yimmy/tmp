@@ -1,5 +1,6 @@
-import type { LoaderFunction, MetaFunction } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
 import Main from "../../components/Main";
 import PostList from "../../components/PostList";
 import Title from "../../components/Title";
@@ -9,21 +10,29 @@ import {
 } from "../../utilities/compile-mdx.server";
 import setMetaFromFrontmatter from "../../utilities/frontmatter-to-meta";
 
-export const loader: LoaderFunction = async () => {
-  const blogContent = await getContentForPage("content/blog-list.mdx");
-  const postsList = await getContentForListPage("content/blog");
+export async function loader() {
+  try {
+    const blogContent = await getContentForPage("content/blog-list.mdx");
+    const postsList = await getContentForListPage("content/blog");
 
-  return { blogContent, postsList };
-};
+    if (blogContent && postsList.length > 0) {
+      return json({ blogContent, postsList });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  throw new Response("Application Error", {
+    status: 500,
+    statusText: "ApplicationError",
+  });
+}
 
 export const meta: MetaFunction = ({ data }) =>
   setMetaFromFrontmatter({ frontmatter: data.blogContent.frontmatter });
 
 const BlogIndex = () => {
-  const { blogContent, postsList } = useLoaderData<{
-    blogContent: MDXLoaderData;
-    postsList: MDXLoaderData[];
-  }>();
+  const { blogContent, postsList } = useLoaderData<typeof loader>();
 
   return (
     <Main>

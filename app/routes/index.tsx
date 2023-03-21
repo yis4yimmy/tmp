@@ -1,5 +1,6 @@
-import type { LoaderFunction, MetaFunction } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
+import type { MetaFunction } from "@remix-run/node";
+import { Link, useLoaderData } from "@remix-run/react";
 import Main from "../components/Main";
 import PostList from "../components/PostList";
 import Title from "../components/Title";
@@ -10,21 +11,29 @@ import {
 } from "../utilities/compile-mdx.server";
 import setMetaFromFrontmatter from "../utilities/frontmatter-to-meta";
 
-export const loader: LoaderFunction = async () => {
-  const mainContent = await getContentForPage("content/home.mdx");
-  const postsList = await getContentForListPage("content/blog");
+export async function loader() {
+  try {
+    const mainContent = await getContentForPage("content/home.mdx");
+    const postsList = await getContentForListPage("content/blog");
 
-  return { mainContent, postsList };
-};
+    if (mainContent && postsList.length > 0) {
+      return json({ mainContent, postsList });
+    }
+  } catch (error) {
+    console.error(error);
+  }
 
-export const meta: MetaFunction = ({ data }) =>
-  setMetaFromFrontmatter({ frontmatter: data.mainContent.frontmatter });
+  throw new Response("Application Error", {
+    status: 500,
+    statusText: "Application Error",
+  });
+}
 
-const Index = () => {
-  const { mainContent, postsList } = useLoaderData<{
-    mainContent: MDXLoaderData;
-    postsList: MDXLoaderData[];
-  }>();
+export const meta: MetaFunction<typeof loader> = ({ data }) =>
+  setMetaFromFrontmatter(data?.mainContent);
+
+export default function Index() {
+  const { mainContent, postsList } = useLoaderData<typeof loader>();
 
   const HomeContent = useMDXComponent(mainContent.code);
 
@@ -38,6 +47,4 @@ const Index = () => {
       <PostList posts={postsList.map(({ frontmatter }) => frontmatter)} />
     </Main>
   );
-};
-
-export default Index;
+}

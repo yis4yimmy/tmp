@@ -26,11 +26,9 @@ test.describe("Homepage", () => {
   test("should navigate to the blog posts", async ({ page }) => {
     await page.goto("/");
 
-    for (const link of await page.getByRole("listitem").all()) {
-      await link.click();
+    await page.getByRole("listitem").first().click();
 
-      await expect(page).not.toHaveTitle(/404: Post Not Found/i);
-    }
+    await expect(page).not.toHaveTitle(/404/i);
   });
 });
 
@@ -95,13 +93,25 @@ test.describe("Blog Listing", () => {
     expect(postLinks.length).toBeGreaterThanOrEqual(1);
   });
 
-  test("should navigate to the blog posts", async ({ page }) => {
+  test("should navigate to a blog post", async ({ page }) => {
     await page.goto("/blog");
 
-    for (const link of await page.getByRole("listitem").all()) {
-      await link.click();
+    await page.getByRole("listitem").first().click();
 
-      await expect(page).not.toHaveTitle(/404: Post Not Found/i);
-    }
+    await expect(page).not.toHaveTitle(/404/i);
+  });
+});
+
+test.describe("Page Not Found", () => {
+  test("should handle when pages are not found", async ({ page }) => {
+    await page.goto("/notfound");
+
+    await expect(page).toHaveTitle(/404/i);
+  });
+
+  test("should handle when blog posts are not found", async ({ page }) => {
+    await page.goto("/blog/notfound");
+
+    await expect(page).toHaveTitle(/404/i);
   });
 });

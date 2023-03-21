@@ -38,56 +38,48 @@ const bundleMDXWithOptions = async (blob: string) => {
 };
 
 const bundleMDXForPage = async (path: string) => {
-  try {
-    const blob = await getFileFromGit(path);
+  const blob = await getFileFromGit(path);
 
-    return bundleMDXWithOptions(blob);
-  } catch (error) {
-    console.error(error);
-  }
+  return bundleMDXWithOptions(blob);
 };
 
 export const getContentForPage = async (path: string) =>
   getCachedContent(path, () => bundleMDXForPage(path));
 
 export const getContentForListPage = async (path: string) => {
-  try {
-    const dirItems = await getDirItemsFromGit(path);
+  const dirItems = await getDirItemsFromGit(path);
 
-    const itemsContent = await Promise.all(
-      dirItems.reduce((requests, { git_url: gitUrl, path }) => {
-        if (checkCache(path)) {
-          console.info("List item in cache:", path);
+  const itemsContent = await Promise.all(
+    dirItems.reduce((requests, { git_url: gitUrl, path }) => {
+      if (checkCache(path)) {
+        console.info("List item in cache:", path);
 
-          requests.push(
-            new Promise((resolve) => resolve({ cached: true, path }))
-          );
-        } else if (gitUrl) {
-          requests.push(
-            (async () => {
-              const blob = await getBlobFromGitUrl(gitUrl);
+        requests.push(
+          new Promise((resolve) => resolve({ cached: true, path }))
+        );
+      } else if (gitUrl) {
+        requests.push(
+          (async () => {
+            const blob = await getBlobFromGitUrl(gitUrl);
 
-              return { cached: false, path, blob };
-            })()
-          );
-        }
+            return { cached: false, path, blob };
+          })()
+        );
+      }
 
-        return requests;
-      }, [] as Promise<{ cached: boolean; path: string; blob?: string }>[])
-    );
+      return requests;
+    }, [] as Promise<{ cached: boolean; path: string; blob?: string }>[])
+  );
 
-    const compiledContent = await Promise.all(
-      itemsContent.map(({ cached, path, blob }) => {
-        if (cached || !blob) {
-          return getCachedContent(path, () => bundleMDXForPage(path));
-        }
+  const compiledContent = await Promise.all(
+    itemsContent.map(({ cached, path, blob }) => {
+      if (cached || !blob) {
+        return getCachedContent(path, () => bundleMDXForPage(path));
+      }
 
-        return getCachedContent(path, () => bundleMDXWithOptions(blob));
-      })
-    );
+      return getCachedContent(path, () => bundleMDXWithOptions(blob));
+    })
+  );
 
-    return compiledContent;
-  } catch (error) {
-    console.error(error);
-  }
+  return compiledContent;
 };

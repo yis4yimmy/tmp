@@ -1,4 +1,5 @@
-import { LoaderFunction, json, ActionFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import Main from "../../components/Main";
 import Table, { TableColumn } from "../../components/Table";
@@ -11,7 +12,7 @@ interface CacheKeysData {
   path: string;
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   await requireAdminLogin(request);
 
   const keys = getAllKeys();
@@ -19,9 +20,9 @@ export const loader: LoaderFunction = async ({ request }) => {
   const data = keys.map((path) => ({ id: path, path }));
 
   return json(data);
-};
+}
 
-export const action: ActionFunction = async ({ request }) => {
+export async function action({ request }: ActionArgs) {
   await checkAdmin(request);
 
   const formData = await request.formData();
@@ -37,7 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
   const result = dropItLikeItsHot(keyToRemove);
 
   return json({ success: result });
-};
+}
 
 const columns: TableColumn<CacheKeysData>[] = [
   {
@@ -63,7 +64,7 @@ const columns: TableColumn<CacheKeysData>[] = [
 ];
 
 const CacheManagement = () => {
-  const currentCacheData = useLoaderData<CacheKeysData[]>();
+  const currentCacheData = useLoaderData<typeof loader>();
 
   return (
     <Main>

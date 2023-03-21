@@ -5,25 +5,19 @@ const octokit = new Octokit({
 });
 
 export const getDirItemsFromGit = async (dirPath: string) => {
-  try {
-    const dirItems = await octokit.repos.getContent({
-      owner: "yis4yimmy",
-      repo: "tmp",
-      path: dirPath,
-    });
+  const dirItems = await octokit.repos.getContent({
+    owner: "yis4yimmy",
+    repo: "tmp",
+    path: dirPath,
+  });
 
-    const items = dirItems.data;
+  const items = dirItems.data;
 
-    if (!items || !Array.isArray(items)) {
-      throw new Error("Invalid directory maybe?");
-    }
-
-    return items;
-  } catch (error) {
-    console.error(error);
-
-    throw error;
+  if (!items || !Array.isArray(items)) {
+    throw new Error("Invalid directory maybe?");
   }
+
+  return items;
 };
 
 export const getBlobFromGitUrl = async (gitUrl: string) => {
@@ -36,23 +30,17 @@ export const getBlobFromGitUrl = async (gitUrl: string) => {
 };
 
 export const getFileFromGit = async (path: string) => {
-  try {
-    const content = (await octokit.repos.getContent({
-      owner: "yis4yimmy",
-      repo: "tmp",
-      path,
-    })) as { data: { git_url: string | null } };
+  const content = (await octokit.repos.getContent({
+    owner: "yis4yimmy",
+    repo: "tmp",
+    path,
+  })) as { data: { git_url: string | null } };
 
-    const blobUrl = content.data.git_url;
+  const blobUrl = content.data.git_url;
 
-    if (!blobUrl) {
-      throw new Error("Requested file cannot be fetched as a blob");
-    }
-
-    return getBlobFromGitUrl(blobUrl);
-  } catch (error) {
-    console.error(error);
-
-    throw error;
+  if (!blobUrl) {
+    throw new Error("Requested file cannot be fetched as a blob");
   }
+
+  return getBlobFromGitUrl(blobUrl);
 };
